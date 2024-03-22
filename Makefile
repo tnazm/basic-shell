@@ -11,3 +11,6 @@ clean:
 
 run: shell
 	./shell
+
+compress:
+	zip -r tnazmee-Assignment-1.zip README.md shell.c Makefile
