@@ -1,4 +1,5 @@
 // Assignment 1 - Tanzeem Nazmee
+#define MAX_STR_LEN 1024
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,32 +17,44 @@ void ls(char *path);
 void cp(char *src, char *dest);
 void mv(char *src, char *dest);
 void rm(char *path);
+void echo(char *input, int num);
+void cat(char *path);
+void grep(char *path, char *pattern);
+void head(char *path, int num);
+void tail(char *path, int num);
+void touch(char *path);
+char* concat_args(char* arg_arr[], int num, int max_num);
 
 int main() {
-    char input[1024];
+    char input[MAX_STR_LEN];
     bool shouldContinue = true;
-    const int MAX_ARGS = 4;
+    const int MAX_ARGS = 32;
 
     while (shouldContinue) {
 	char *command;
 	char *args[MAX_ARGS];
 	char *arg1;
+	char saved_input[MAX_STR_LEN];
 	char *token = strtok(input, " ");
+	int token_pos[MAX_ARGS];
+	char *save_ptr;
 	int arg_num = 0;
 
 	printf("myshell> ");
 	fgets(input, 1024, stdin);
 
 	input[strcspn(input, "\n")] = 0;
+	strcpy(saved_input, input);
 
-	token = strtok(input, " ");
+	token = strtok_r(input, " ", &save_ptr);
 
 	/* Tokenize input into a list of arguments */
 	for (int i = 0; token != NULL && i < MAX_ARGS; i++) {
 	    args[i] = token;
+	    token_pos[i] = save_ptr - input;
 	    arg_num++;
 
-	    token = strtok(NULL, " ");
+	    token = strtok_r(NULL, " ", &save_ptr);
 	}
 
 	command = args[0];
@@ -49,8 +62,9 @@ int main() {
         
 	if (strcmp(command, "cd") == 0) {
 	    if (arg_num == 2) {
-		cd(arg1);		
-	    } else {
+		cd(arg1);
+	    }
+	    else {
 		printf("Usage: cd <directory>\n");
 	    }
 	}
@@ -65,44 +79,109 @@ int main() {
 	}
 	else if (strcmp(command, "mkdir") == 0) {
 	    if (arg_num == 2) {
-		make_dir(arg1);		
-	    } else {
+		make_dir(arg1);
+	    }
+	    else {
 		printf("Usage: mkdir <directory>\n");
 	    }
 	}
 	else if (strcmp(command, "rmdir") == 0) {
 	    if (arg_num == 2) {
-		remove_dir(arg1);		
-	    } else {
+		remove_dir(arg1);
+	    }
+	    else {
 		printf("Usage: rmdir <directory>\n");
 	    }
 	}
 	else if (strcmp(command, "ls") == 0) {
 	    if (arg_num < 3) {
-		ls(arg1);		
-	    } else {
+		ls(arg1);
+	    }
+	    else {
 		printf("Usage: ls <directory>\n");
 	    }
 	}
 	else if (strcmp(command, "cp") == 0) {
 	    if (arg_num == 3) {
 		cp(args[1], args[2]);
-	    } else {
+	    }
+	    else {
 		printf("Usage: cp <source> <destination>\n");
 	    }
 	}
 	else if (strcmp(command, "mv") == 0) {
 	    if (arg_num == 3) {
 		mv(args[1], args[2]);
-	    } else {
+	    }
+	    else {
 		printf("Usage: mv <source> <destination>\n");
 	    }
 	}
 	else if (strcmp(command, "rm") == 0) {
 	    if (arg_num == 2) {
 		rm(arg1);
-	    } else {
+	    }
+	    else {
 		printf("Usage: rm <file>");
+	    }
+	}
+	else if (strcmp(command, "echo") == 0) {
+	    if (arg_num > 1)
+	    {
+		echo(saved_input, token_pos[0]);
+	    }
+	    else {
+		printf("Usage: echo <string>");
+	    }
+	}
+	else if (strcmp(command, "cat") == 0) {
+	    if (arg_num == 2) {
+		/* cat(arg1); */
+	    }
+	    else {
+		printf("Usage: cat <file>");
+	    }
+	}
+	else if (strcmp(command, "head") == 0) {
+	    if (arg_num == 4 && strcmp(args[1], "-n")) {
+		/* head(args[3], args[2]); */
+	    } else if (arg_num == 3) {
+		/* head(args[2], 10); */
+	    }
+	    else {
+		printf("head -n <number> <file>");
+	    }
+	}
+	else if (strcmp(command, "tail") == 0) {
+	    if (arg_num == 4 && strcmp(args[2], "-n")) {
+		/* tail(args[3], args[2]); */
+	    } else if (arg_num == 3) {
+		/* tail(args[2], 10); */
+	    }
+	    else {
+		printf("tail -n <number> <file>");
+	    }
+	}
+	else if (strcmp(command, "grep") == 0) {
+	    if (arg_num == 3) {
+		/* grep(args[1], args[2]); */
+	    }
+	    else {
+		
+	    }
+	}
+	else if (strcmp(command, "wc") == 0) {
+	    if (arg_num == 2) {
+	    }
+	    else {
+		printf("Usage: wc <file>\n");
+	    }
+	}
+	else if (strcmp(command, "touch") == 0) {
+	    if (arg_num == 2) {
+	    }
+	    else {
+		printf("Usage: touch <file>\n");
 	    }
 	}
 	else {
@@ -207,3 +286,42 @@ void mv(char *src, char *dest) {
 void rm(char *path) {
     unlink(path);
 }
+
+/* Prints INPUT at offset NUM. */
+void echo(char *input, int num) {
+    char *output = input;
+    output += num;
+    printf("%s\n", output);
+}
+
+void cat(char *path)
+{
+    FILE *fptr;
+    if ((fptr = fopen(path, "r")) == NULL)
+    {
+	
+    }
+}
+void grep(char *path, char *pattern);
+void head(char *path, int num);
+void tail(char *path, int num);
+void touch(char *path);
+
+/* Concatenate all arguments past arg NUM. */
+char *concat_args(char *input[], int num, int max_num)
+{
+    
+}
+/* char* concat_args(char* arg_arr[], int num, int max_num) { */
+/*     char* result = (char*)malloc(sizeof(char) * 1024); */
+
+/*     for (int i = num; i < max_num && arg_arr[i] != NULL; i++) { */
+/*         if (i != num) */
+/*         { */
+/* 	    strcat(result, " "); */
+/* 	} */
+/* 	strcat(result, arg_arr[i]); */
+/*     } */
+
+/*     return result; */
+/* } */

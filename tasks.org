@@ -1,0 +1,20 @@
+#+TITLE: Assignment 3 tasks
+* TODO echo
+* TODO cat
+* TODO grep
+* TODO head
+* TODO tail
+* TODO wc
+* TODO touch
+* TODO pipes
+* TODO redirection (=>=)
+Make every function return a =char *= pointer to their output as a string, so it
+can be placed back into =args[]=.
+* TODO Concatenate all args from i to n
+Solution:
+1. Input gets copied into ~saved_input~, which is unmodified by ~strtok~.
+2. strtok separates input into null separated tokens
+3. function reads input and records the char position of each null byte
+   * new array ~token_pos[]~ returned
+4. function ~concat_args()~ returns a pointer to ~saved_input~ at position of
+   arg i
